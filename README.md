@@ -1,4 +1,4 @@
-# ROpenManim（v0.0.3）
+# ROpenManim（v0.0.4）
 
 Manim 的 R 侧实现：**帧 = 绘制指令列表**，v1 后端只实现 path / stroke 两个动词，
 默认用 grid 画到任意 R 图形设备，再由 av 编码成 mp4。
@@ -6,12 +6,16 @@ Manim 的 R 侧实现：**帧 = 绘制指令列表**，v1 后端只实现 path /
 仓库：<https://github.com/Judy-ZQ/ROpenManim>　|　许可：GPL-2　|　架构取舍见
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)。
 
-> **v0.0.3 只加不减**：在 0.0.2 的 9 个辅助导出之上再加 6 个
-> （`cjk_font()`、`lab()`、`tex()`、`ref_axes()`、`fig()`、`frame_to()`），
-> 把教程里「每页都在用」的排字与出图包装也收进包。
-> 此前 `library(ROpenManim)` 之后照抄 `st(COL$cyan, 5)` 报「没有 st 这个函数」，
-> 抄 `fig(sc, "x", t = 1.75)` 报「没有 fig 这个函数」；现在都直接可运行。
-> **0.0.1 / 0.0.2 的全部 API 行为不变**；旧版本用户建议升级。
+> **v0.0.4 不新增导出，只修两个「照抄就炸」的行为缺陷**：
+> `render()` / `render_frame()` / `last_frame()` 现在会**自动创建输出文件的父目录**
+> ——此前照抄教程的 `render(sc, "animations/x.mp4")` 会在 84 帧全部画完之后，
+> 才被 `av` 以 `file.exists(dirname(output)) is not TRUE` 拒绝；
+> 帧数改用 `ceiling(duration * fps - 1e-9)`，去掉 `1.2+1.0+0.6` 浮点累加尾差
+> 造成的「2.8 秒渲出 85 帧」。仍是 **103 个导出**，0.0.3 的 API 行为不变。
+>
+> 此前两版把教程里的辅助函数收进包：0.0.2 收 `COL` / `st()` / `fl()` 与结构查询，
+> 0.0.3 收 `cjk_font()` / `lab()` / `tex()` / `ref_axes()` / `fig()` / `frame_to()`。
+> 所以从 0.0.4 起，书里的示例整段复制进 `library(ROpenManim)` 会话即可运行。
 
 ## 安装（Windows 优先）
 
@@ -20,15 +24,15 @@ Manim 的 R 侧实现：**帧 = 绘制指令列表**，v1 后端只实现 path /
 
 ### 方式 A：下载 zip 直接装（推荐）
 
-1. 打开 [v0.0.3 Release](https://github.com/Judy-ZQ/ROpenManim/releases/tag/v0.0.3)，
-   下载 `ROpenManim_0.0.3.zip`（Windows binary，约 350 KB）。若 Release 链接
+1. 打开 [v0.0.4 Release](https://github.com/Judy-ZQ/ROpenManim/releases/tag/v0.0.4)，
+   下载 `ROpenManim_0.0.4.zip`（Windows binary，约 350 KB）。若 Release 链接
    在当前网络下打不开，仓库里还有同一文件的
-   [直链](https://raw.githubusercontent.com/Judy-ZQ/ROpenManim/main/dist/ROpenManim_0.0.3.zip)
+   [直链](https://raw.githubusercontent.com/Judy-ZQ/ROpenManim/main/dist/ROpenManim_0.0.4.zip)
    与 [`dist/`](dist/) 备份。
 2. 在 R 里执行（换成你实际的下载路径）：
 
 ```r
-install.packages("C:/Users/me/Downloads/ROpenManim_0.0.3.zip",
+install.packages("C:/Users/me/Downloads/ROpenManim_0.0.4.zip",
                  repos = NULL, type = "win.binary")
 ```
 
@@ -46,10 +50,10 @@ remotes::install_github("Judy-ZQ/ROpenManim")
 
 ### 方式 C：源码 tarball
 
-同一 Release 页也提供 `ROpenManim_0.0.3.tar.gz`（约 53 KB）：
+同一 Release 页也提供 `ROpenManim_0.0.4.tar.gz`（约 53 KB）：
 
 ```r
-install.packages("ROpenManim_0.0.3.tar.gz", repos = NULL, type = "source")
+install.packages("ROpenManim_0.0.4.tar.gz", repos = NULL, type = "source")
 ```
 
 ### 依赖与可选功能
@@ -65,7 +69,7 @@ Windows 上请从 CRAN 装**二进制版** `av`（默认即是），它自带 FF
 
 ```r
 library(ROpenManim)
-packageVersion("ROpenManim")                  # 0.0.3
+packageVersion("ROpenManim")                  # 0.0.4
 ?ROpenManim-package                           # 包级帮助
 ?helpers                                      # 样式简写与结构窥视（本版新增）
 
@@ -89,6 +93,7 @@ render(s, "first.mp4", quality = "m")
 |---|---|
 | 中文变成一串方框 | `text()` / `label_obj()` 默认 `family = "sans"`；Windows 上显式给 `family = "Microsoft YaHei"` |
 | `mathtex()` 报找不到 dvisvgm | 公式是可选功能；装 TeX 发行版并把 `dvisvgm` 放进 PATH |
+| `render()` 报 `file.exists(dirname(output)) is not TRUE` | 你装的是 0.0.3 或更早，且输出目录（如 `animations/`）不存在。升级到 0.0.4 会自动建；临时写法：先 `dir.create("animations", recursive = TRUE, showWarnings = FALSE)` |
 | `render()` 报 av 相关错 | 从 CRAN 重装二进制版 `av`：`install.packages("av")` |
 | 报 `play() 只支持一个动画` | `scene$play()` 每次只收一个动画；多个请用 `animation_group(...)` |
 | `library()` 提示 `text` / `transform` 被遮蔽 | 正常：本包沿用 Manim 风格的同名函数；要用 base R 的请写 `base::transform()`、`graphics::text()` |
@@ -293,7 +298,7 @@ sc$play(rotate3d_group(box, axis = "z", angle = pi / 4))
 
 ```bash
 cd ROpenManim
-Rscript regression/run-all.R          # 合计 209 PASS / 0 FAIL
+Rscript regression/run-all.R          # 合计 218 PASS / 0 FAIL
 ```
 
 | 脚本 | 条数 | 覆盖 |
@@ -302,7 +307,7 @@ Rscript regression/run-all.R          # 合计 209 PASS / 0 FAIL
 | `regression/rm_p1_assert.R` | 40 | P1 图元 + 线性变换 |
 | `regression/rm_homogeneous_assert.R` | 42 | 齐次 3x3 |
 | `regression/rm_3d_assert.R` | 74 | 齐次 4x4 / 相机 / 三维 |
-| `regression/rm_helpers_assert.R` | 37 | `COL` / `st()` / `fl()` 与 `.rm_*` 逐项等价、结构查询、`cjk_font()`/`lab()`/`fig()` 等排字出图、第一章示例可独立运行 |
+| `regression/rm_helpers_assert.R` | 46 | `COL` / `st()` / `fl()` 与 `.rm_*` 逐项等价、结构查询、排字出图、输出目录自动创建、帧数浮点容差、第一章示例可独立运行 |
 
 覆盖：`COL` / `st()` / `fl()` 与 `.rm_stroke()` / `.rm_fill()` 逐项等价、
 `peek()` / `n_subpaths()` / `can_morph()` 的输出、用户第一章示例 2.4 秒且走真 morph；

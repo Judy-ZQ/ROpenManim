@@ -117,5 +117,40 @@ p2 <- frame_to(s2, "two", 0.5, quality = "l", dir = tdir)
 ck("frame_to() 返回路径且已写盘", file.exists(p2) && file.size(p2) > 500)
 unlink(tdir, recursive = TRUE, force = TRUE)
 
+## ---- v0.0.4：输出目录自动创建 + 帧数浮点容差 ----
+od <- file.path(tempdir(), "rm_out_probe")
+unlink(od, recursive = TRUE, force = TRUE)
+mini <- scene()
+mini$add(circle_obj(r = 1, style = st(COL$cyan, 4)))
+mini$play(create(mini$items[[1]], run_time = 0.4))
+usr_dur <- 1.2 + 1.0 + 0.6          # 第 2 章场景：三个 run_time 浮点累加
+ck("真实 duration 的原始 ceiling 确实是 85（说明为什么修）",
+   ceiling(usr_dur * 30) == 85L)
+ck(".rm_n_frames 对同一 duration 给出 84 帧", .rm_n_frames(usr_dur, 30) == 84L)
+ck("非整数帧数仍向上取整", .rm_n_frames(1.01, 30) == 31L)
+ck("极短场景至少出 1 帧", .rm_n_frames(0.001, 30) == 1L)
+
+f_abs <- file.path(od, "deep", "nested", "f.png")
+render_frame(mini, f_abs, t = 0.2, quality = "l")
+ck("render_frame() 递归创建嵌套输出目录", file.exists(f_abs) && file.size(f_abs) > 500)
+f_lf <- file.path(od, "other", "last.png")
+last_frame(mini, f_lf, quality = "l")
+ck("last_frame() 同样自动建目录", file.exists(f_lf) && file.size(f_lf) > 500)
+v_abs <- file.path(od, "clips", "a.mp4")
+render(mini, v_abs, quality = "l", fps = 5, verbose = FALSE)
+ck("render() 输出目录不存在时仍能编码", file.exists(v_abs) && file.size(v_abs) > 500)
+ck(".rm_prepare_output 对单层文件名是 no-op",
+   identical(.rm_prepare_output("x.mp4"), "x.mp4"))
+
+## 真正复现用户场景：干净目录 + 带子目录的相对路径
+old_wd <- getwd(); setwd(od)
+v_rel <- try(render(mini, "animations/first-scene.mp4",
+                    quality = "l", fps = 5, verbose = FALSE), silent = TRUE)
+setwd(old_wd)
+ck("照抄 render(sc, 'animations/x.mp4') 不再报 dirname(output) 错",
+   !inherits(v_rel, "try-error") &&
+     file.exists(file.path(od, "animations", "first-scene.mp4")))
+unlink(od, recursive = TRUE, force = TRUE)
+
 cat(sprintf("\n==== %d PASS / %d FAIL ====\n", pass, fail))
 if (fail > 0L) quit(save = "no", status = 1L)

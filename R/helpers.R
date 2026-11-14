@@ -148,7 +148,7 @@ ref_axes <- function(lim = 3.4, color = COL$dim, width = 2) {
 #' @export
 fig <- function(sc, name, t = NULL, quality = "m", dir = "figs") {
   f <- file.path(dir, paste0(name, ".png"))
-  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  .rm_prepare_output(f)
   if (is.null(t)) last_frame(sc, f, quality = quality)
   else render_frame(sc, f, t = t, quality = quality)
   if (.rm_in_knit()) return(knitr::include_graphics(f))
@@ -159,7 +159,7 @@ fig <- function(sc, name, t = NULL, quality = "m", dir = "figs") {
 #' @export
 frame_to <- function(sc, name, t, quality = "m", dir = "figs") {
   f <- file.path(dir, paste0(name, ".png"))
-  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  .rm_prepare_output(f)
   render_frame(sc, f, t = t, quality = quality)
   invisible(f)
 }

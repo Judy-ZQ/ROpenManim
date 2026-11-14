@@ -14,7 +14,7 @@ last_frame(sc, file, quality = "h")
 \arguments{
   \item{background}{画布背景色，\code{"transparent"} 输出带 alpha 的 PNG。}
   \item{camera}{\code{camera3d()} 相机；三维场景建议显式设置。}
-  \item{file}{输出文件路径。}
+  \item{file}{输出文件路径；父目录不存在时自动递归创建。}
   \item{fps}{帧率；默认由 \code{quality} 决定。}
   \item{height}{该参数的含义见本页 \code{Usage} 与 \code{Details}；同名参数在各函数间语义一致。}
   \item{keep_frames}{为 \code{TRUE} 时保留逐帧 PNG 目录。}
@@ -27,7 +27,7 @@ last_frame(sc, file, quality = "h")
 \value{
 \code{scene()} 返回 R6 场景；\code{compile(t)} 返回绘制指令列表；\code{render()} / \code{render_frame()} / \code{last_frame()} 写出文件。
 }
-\details{帧不是逐步修改的状态，而是 \code{compile(t)} 对时刻 \code{t} 的纯函数求值——它返回一组绘制指令（\code{stroke} / \code{path}），后端只认这两个动词。因此可以跳帧、倒序渲染，结果完全一致。画布固定高 8 unit、宽高比 16:9；\code{quality} 四档只改像素与帧率。}
+\details{帧不是逐步修改的状态，而是 \code{compile(t)} 对时刻 \code{t} 的纯函数求值——它返回一组绘制指令（\code{stroke} / \code{path}），后端只认这两个动词。因此可以跳帧、倒序渲染，结果完全一致。画布固定高 8 unit、宽高比 16:9；\code{quality} 四档只改像素与帧率。三个出片函数会递归创建 \code{file} 的父目录，\code{animations/x.mp4} 这类带子目录的相对路径可直接照抄，无需先手工建目录。帧数按 \code{ceiling(duration * fps - 1e-9)} 计算，消除多个 \code{run_time} 浮点累加的尾差（1.2 + 1.0 + 0.6 秒在 30 fps 下正好 84 帧，不多渲一帧）。}
 \examples{
 s <- scene()
 s$add(circle_obj(r = 1))

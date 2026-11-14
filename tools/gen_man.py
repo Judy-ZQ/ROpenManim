@@ -30,7 +30,11 @@ groups = [
      "帧不是逐步修改的状态，而是 \\code{compile(t)} 对时刻 \\code{t} 的纯函数求值——"
      "它返回一组绘制指令（\\code{stroke} / \\code{path}），后端只认这两个动词。"
      "因此可以跳帧、倒序渲染，结果完全一致。"
-     "画布固定高 8 unit、宽高比 16:9；\\code{quality} 四档只改像素与帧率。",
+     "画布固定高 8 unit、宽高比 16:9；\\code{quality} 四档只改像素与帧率。"
+     "三个出片函数会递归创建 \\code{file} 的父目录，\\code{animations/x.mp4} 这类"
+     "带子目录的相对路径可直接照抄，无需先手工建目录。帧数按 "
+     "\\code{ceiling(duration * fps - 1e-9)} 计算，消除多个 \\code{run_time} "
+     "浮点累加的尾差（1.2 + 1.0 + 0.6 秒在 30 fps 下正好 84 帧，不多渲一帧）。",
      "s <- scene()\ns$add(circle_obj(r = 1))\nlength(s$compile(0))\ns$duration()"),
 
     ("constants", "画布常量", ["rm_frame_height", "rm_aspect"],
@@ -152,7 +156,8 @@ argdoc = {
     "step": "网格步长。", "cam": "\\code{camera3d()} 构造的相机。",
     "P": "点集矩阵，每行一个三维点。",
     "quality": "画质档 \\code{\"l\"} / \\code{\"m\"} / \\code{\"h\"} / \\code{\"k\"}，默认 \\code{\"h\"}。",
-    "file": "输出文件路径。", "fps": "帧率；默认由 \\code{quality} 决定。",
+    "file": "输出文件路径；父目录不存在时自动递归创建。",
+    "fps": "帧率；默认由 \\code{quality} 决定。",
     "verbose": "是否打印出片进度。", "keep_frames": "为 \\code{TRUE} 时保留逐帧 PNG 目录。",
     "v": "投影方向向量。", "n_seg": "弧线分段数。", "center": "中心点。",
     "axis": "旋转轴（字符串或长度 3 的向量）；\\code{rotation4_matrix()} 中它是第一个参数。",
