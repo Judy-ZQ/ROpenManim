@@ -90,3 +90,76 @@ peek <- function(o, label = NULL) {
               min(xs), max(xs), min(ys), max(ys)))
   invisible(o)
 }
+
+## ---- 排字与出图包装 ----
+## 每个例子都要做三件与动画内核无关的事：挑一个中文字体、把文字/公式放到
+## 某个坐标、把当前帧变成一张图。这些包装原先只写在教程的 _setup.qmd 里，
+## 于是读者把书里的 fig(sc, "x", t = 1.75) 抄进安装版就报「没有 fig 这个函数」。
+## 收进包里之后，书里的示例才是真的可以直接跑。
+
+## 字体探测有点贵（要枚举系统字体），结果缓存起来；lab() 的默认参数每次调用
+## 都会求值一次，不缓存会拖慢整本书的渲染。
+.rm_cjk_cache <- local({
+  e <- new.env(parent = emptyenv())
+  e$family <- NULL
+  e
+})
+
+#' @export
+cjk_font <- function() {
+  if (!is.null(.rm_cjk_cache$family)) return(.rm_cjk_cache$family)
+  cands <- c("Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC",
+             "Source Han Sans SC", "SimHei", "SimSun")
+  have <- tryCatch(unique(systemfonts::system_fonts()$family),
+                   error = function(e) character(0))
+  hit <- cands[cands %in% have]
+  .rm_cjk_cache$family <- if (length(hit)) hit[[1L]] else "sans"
+  .rm_cjk_cache$family
+}
+
+#' @export
+lab <- function(str, x, y, size = 28, color = COL$white,
+                family = cjk_font(), ...) {
+  o <- text(str, size = size, color = color, family = family, ...)
+  o$move_to(x, y)
+  o
+}
+
+#' @export
+tex <- function(s, x, y, size = 44, color = COL$white, ...) {
+  o <- mathtex(s, size = size, color = color, ...)
+  o$move_to(x, y)
+  o
+}
+
+#' @export
+ref_axes <- function(lim = 3.4, color = COL$dim, width = 2) {
+  vgroup(line_obj(c(-lim, 0), c(lim, 0), st(color, width)),
+         line_obj(c(0, -lim), c(0, lim), st(color, width)))
+}
+
+## knit 上下文里 fig() 要交一个 knitr 图对象；在控制台里则应该只留下文件、
+## 返回路径。knitr 只是 Suggests，用 requireNamespace 软引用。
+.rm_in_knit <- function() {
+  isTRUE(requireNamespace("knitr", quietly = TRUE)) &&
+    !is.null(tryCatch(knitr::current_input(), error = function(e) NULL))
+}
+
+#' @export
+fig <- function(sc, name, t = NULL, quality = "m", dir = "figs") {
+  f <- file.path(dir, paste0(name, ".png"))
+  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  if (is.null(t)) last_frame(sc, f, quality = quality)
+  else render_frame(sc, f, t = t, quality = quality)
+  if (.rm_in_knit()) return(knitr::include_graphics(f))
+  message("已写出 ", f, "（", format(file.size(f)), " 字节）")
+  invisible(f)
+}
+
+#' @export
+frame_to <- function(sc, name, t, quality = "m", dir = "figs") {
+  f <- file.path(dir, paste0(name, ".png"))
+  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  render_frame(sc, f, t = t, quality = quality)
+  invisible(f)
+}

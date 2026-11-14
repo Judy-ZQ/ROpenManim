@@ -88,5 +88,34 @@ ck("transform 未退化为交叉淡入淡出", is.null(warn))
 ck("末帧有 1 条绘制指令", identical(length(usr$compile()), 1L))
 ck("末帧换成金色描边", identical(usr$compile()[[1]]$col, COL$gold))
 
+## ---- 排字与出图包装（v0.0.3）----
+## 这六个函数原先只在教程 _setup.qmd 里，读者抄 fig()/lab()/tex() 会报「没有这个函数」。
+ck("cjk_font() 返回单个字符串", is.character(cjk_font()) && length(cjk_font()) == 1L)
+ck("cjk_font() 有缓存（两次同一值）", identical(cjk_font(), cjk_font()))
+
+lb <- lab("测试", 1, 2, size = 20)
+ck("lab() 返回图元", inherits(lb, "rm_mobject"))
+bb <- lb$bbox()
+ctr <- c(mean(bb[c("xmin", "xmax")]), mean(bb[c("ymin", "ymax")]))
+ck("lab() 中心落在指定点",
+   isTRUE(all.equal(unname(ctr), c(1, 2), tolerance = 0.05)))
+ck("lab() 中文没有退化成方框（多于 2 条子路径）", n_subpaths(lb) > 2L)
+
+ra <- ref_axes(lim = 2, color = COL$dim, width = 1.5)
+ck("ref_axes() 是 2 个对象", n_objects(ra) == 2L)
+ck("ref_axes() 两条都是描边", all(vapply(ra, function(o) identical(o$style$stroke, COL$dim), TRUE)))
+
+tdir <- file.path(tempdir(), "rm_helpers_fig")
+unlink(tdir, recursive = TRUE, force = TRUE)
+s2 <- scene(); s2$add(circle_obj(r = 1, style = st(COL$cyan, 3)))
+p1 <- suppressMessages(fig(s2, "one", t = 0, quality = "l", dir = tdir))
+ck("fig() 非 knit 上下文返回路径", is.character(p1) && file.exists(p1))
+ck("fig() PNG 非空", file.size(p1) > 500)
+p0 <- suppressMessages(fig(s2, "last", quality = "l", dir = tdir))
+ck("fig() 不给 t 时取末帧", file.exists(p0) && file.size(p0) > 500)
+p2 <- frame_to(s2, "two", 0.5, quality = "l", dir = tdir)
+ck("frame_to() 返回路径且已写盘", file.exists(p2) && file.size(p2) > 500)
+unlink(tdir, recursive = TRUE, force = TRUE)
+
 cat(sprintf("\n==== %d PASS / %d FAIL ====\n", pass, fail))
 if (fail > 0L) quit(save = "no", status = 1L)

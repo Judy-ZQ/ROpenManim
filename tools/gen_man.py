@@ -87,9 +87,10 @@ groups = [
      "\\code{matrix(p, nrow = 1)}，批量用 \\code{pts[i, , drop = FALSE]}。",
      "cam <- camera3d(eye = c(6, -8, 5))\nP <- matrix(c(1, 2, 3), nrow = 1)\nproject_point(cam, P)\ns <- scene(camera = cam)\ns$add(cube3d_obj(side = 2))\nlength(s$compile(0))"),
 
-    ("helpers", "样式简写与结构窥视",
+    ("helpers", "样式简写、结构窥视与排字出图",
      ["COL", "st", "fl", "subpaths", "n_subpaths", "n_curves",
-      "n_objects", "can_morph", "peek"],
+      "n_objects", "can_morph", "peek",
+      "cjk_font", "lab", "tex", "ref_axes", "fig", "frame_to"],
      "\\code{COL} 是 Manim 风格调色板；\\code{st()} / \\code{fl()} 是 \\code{style} 列表的"
      "简写（描边 / 填充），可直接传给任何 \\code{*_obj()}。",
      "后六个函数把「帧 = 绘制指令列表」的结构变成可查询的公开数据："
@@ -99,7 +100,9 @@ groups = [
      "\\code{peek()} 一行打印形状、子路径数与包围盒。"
      "注意 \\strong{对象数} 与 \\strong{子路径数} 是两个不同的数："
      "\\code{arrow_obj()} 是 2 个对象、\\code{text(\"O\")} 可能有多个子路径。",
-     "o <- circle_obj(r = 1, style = st(COL$cyan, 5))\npeek(o)\nn_subpaths(o)\nn_curves(o)\ncan_morph(o, square_obj(side = 2))"),
+     "o <- circle_obj(r = 1, style = st(COL$cyan, 5))\npeek(o)\nn_subpaths(o)\nn_curves(o)\ncan_morph(o, square_obj(side = 2))\n\n"
+     "s <- scene(); s$add(lab(\"hi\", 0, 1)); s$add(ref_axes())\n"
+     "fig(s, \"demo\", t = 0, quality = \"l\", dir = tempdir())"),
 ]
 
 # 自动补齐五个组的成员；二维图元必须排除 3d_obj
@@ -228,7 +231,10 @@ for fname, title, members, desc, details, examples in groups:
         lns.append("\\code{COL} 是颜色列表；\\code{st()} / \\code{fl()} 返回样式列表；"
                    "\\code{subpaths()} 返回折线矩阵列表，\\code{n_subpaths()} / "
                    "\\code{n_curves()} / \\code{n_objects()} 返回非负整数，"
-                   "\\code{can_morph()} 返回逻辑标量，\\code{peek()} 打印摘要并原样返回对象。")
+                   "\\code{can_morph()} 返回逻辑标量，\\code{peek()} 打印摘要并原样返回对象；"
+                   "\\code{cjk_font()} 返回字体族名，\\code{lab()} / \\code{tex()} / "
+                   "\\code{ref_axes()} 返回图元；\\code{fig()} / \\code{frame_to()} "
+                   "写出 PNG 并返回文件路径（前者在 knit 上下文里改交 knitr 图对象）。")
     else:
         lns.append("本页各 \\code{*_obj()} 返回 \\code{rm_mobject}（R6 图元）；"
                    "矩阵构造器返回数值矩阵；动画构造器返回可交给 \\code{scene$play()} 的对象。")
@@ -264,7 +270,7 @@ Manim 的 R 侧实现。核心约定是\strong{帧 = 绘制指令列表}：\code
 另需本机 TeX 与 \code{dvisvgm}（可选 \code{tinytex}）。
 \strong{不需要编译}，Windows 用户无需 Rtools。
 }
-\value{载入后可用 97 个导出，按主题分见 \code{?scene}、\code{?mobjects}、
+\value{载入后可用 103 个导出，按主题分见 \code{?scene}、\code{?mobjects}、
 \code{?animation}、\code{?linalg2d}、\code{?linalg3d}、\code{?`three-d`}、
 \code{?helpers}、\code{?constants}、\code{?text-tex-axes}。}
 \examples{

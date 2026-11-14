@@ -22,7 +22,7 @@ Manim 的 R 侧实现。核心约定是\strong{帧 = 绘制指令列表}：\code
 另需本机 TeX 与 \code{dvisvgm}（可选 \code{tinytex}）。
 \strong{不需要编译}，Windows 用户无需 Rtools。
 }
-\value{载入后可用 97 个导出，按主题分见 \code{?scene}、\code{?mobjects}、
+\value{载入后可用 103 个导出，按主题分见 \code{?scene}、\code{?mobjects}、
 \code{?animation}、\code{?linalg2d}、\code{?linalg3d}、\code{?`three-d`}、
 \code{?helpers}、\code{?constants}、\code{?text-tex-axes}。}
 \examples{

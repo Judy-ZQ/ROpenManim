@@ -1,4 +1,4 @@
-# ROpenManim（v0.0.2）
+# ROpenManim（v0.0.3）
 
 Manim 的 R 侧实现：**帧 = 绘制指令列表**，v1 后端只实现 path / stroke 两个动词，
 默认用 grid 画到任意 R 图形设备，再由 av 编码成 mp4。
@@ -6,11 +6,12 @@ Manim 的 R 侧实现：**帧 = 绘制指令列表**，v1 后端只实现 path /
 仓库：<https://github.com/Judy-ZQ/ROpenManim>　|　许可：GPL-2　|　架构取舍见
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)。
 
-> **v0.0.2 只加不减**：新增 9 个正式导出（`COL` 调色板、`st()` / `fl()` 样式简写，
-> 以及 `subpaths()` / `n_subpaths()` / `n_curves()` / `n_objects()` / `can_morph()` /
-> `peek()` 结构查询），把配套教程里原先只在书里定义的辅助函数收进包。
-> 此前 `library(ROpenManim)` 之后照抄教程的 `st(COL$cyan, 5)` 会报「没有 st 这个函数」，
-> 现在可直接运行。**0.0.1 的全部 API 行为不变**；已装 0.0.1 的用户建议升级。
+> **v0.0.3 只加不减**：在 0.0.2 的 9 个辅助导出之上再加 6 个
+> （`cjk_font()`、`lab()`、`tex()`、`ref_axes()`、`fig()`、`frame_to()`），
+> 把教程里「每页都在用」的排字与出图包装也收进包。
+> 此前 `library(ROpenManim)` 之后照抄 `st(COL$cyan, 5)` 报「没有 st 这个函数」，
+> 抄 `fig(sc, "x", t = 1.75)` 报「没有 fig 这个函数」；现在都直接可运行。
+> **0.0.1 / 0.0.2 的全部 API 行为不变**；旧版本用户建议升级。
 
 ## 安装（Windows 优先）
 
@@ -19,15 +20,15 @@ Manim 的 R 侧实现：**帧 = 绘制指令列表**，v1 后端只实现 path /
 
 ### 方式 A：下载 zip 直接装（推荐）
 
-1. 打开 [v0.0.2 Release](https://github.com/Judy-ZQ/ROpenManim/releases/tag/v0.0.2)，
-   下载 `ROpenManim_0.0.2.zip`（Windows binary，约 350 KB）。若 Release 链接
+1. 打开 [v0.0.3 Release](https://github.com/Judy-ZQ/ROpenManim/releases/tag/v0.0.3)，
+   下载 `ROpenManim_0.0.3.zip`（Windows binary，约 350 KB）。若 Release 链接
    在当前网络下打不开，仓库里还有同一文件的
-   [直链](https://raw.githubusercontent.com/Judy-ZQ/ROpenManim/main/dist/ROpenManim_0.0.2.zip)
+   [直链](https://raw.githubusercontent.com/Judy-ZQ/ROpenManim/main/dist/ROpenManim_0.0.3.zip)
    与 [`dist/`](dist/) 备份。
 2. 在 R 里执行（换成你实际的下载路径）：
 
 ```r
-install.packages("C:/Users/me/Downloads/ROpenManim_0.0.2.zip",
+install.packages("C:/Users/me/Downloads/ROpenManim_0.0.3.zip",
                  repos = NULL, type = "win.binary")
 ```
 
@@ -45,10 +46,10 @@ remotes::install_github("Judy-ZQ/ROpenManim")
 
 ### 方式 C：源码 tarball
 
-同一 Release 页也提供 `ROpenManim_0.0.2.tar.gz`（约 53 KB）：
+同一 Release 页也提供 `ROpenManim_0.0.3.tar.gz`（约 53 KB）：
 
 ```r
-install.packages("ROpenManim_0.0.2.tar.gz", repos = NULL, type = "source")
+install.packages("ROpenManim_0.0.3.tar.gz", repos = NULL, type = "source")
 ```
 
 ### 依赖与可选功能
@@ -64,7 +65,7 @@ Windows 上请从 CRAN 装**二进制版** `av`（默认即是），它自带 FF
 
 ```r
 library(ROpenManim)
-packageVersion("ROpenManim")                  # 0.0.2
+packageVersion("ROpenManim")                  # 0.0.3
 ?ROpenManim-package                           # 包级帮助
 ?helpers                                      # 样式简写与结构窥视（本版新增）
 
@@ -92,8 +93,9 @@ render(s, "first.mp4", quality = "m")
 | 报 `play() 只支持一个动画` | `scene$play()` 每次只收一个动画；多个请用 `animation_group(...)` |
 | `library()` 提示 `text` / `transform` 被遮蔽 | 正常：本包沿用 Manim 风格的同名函数；要用 base R 的请写 `base::transform()`、`graphics::text()` |
 | 中文注释在 GBK 环境下 `source()` 报错 | 把 `LC_CTYPE` 切回 UTF-8；**用安装包不受影响**，只有直跑源码才会遇到 |
-| 抄教程代码报「没有 `st` 这个函数」 | 你装的是 0.0.1。升级到 0.0.2 即可；临时替代写法是 `style = list(stroke = "#58C4DD", stroke_width = 5)` |
-| 教程里的 `lab()` / `tex()` / `fig()` 找不到 | 这三个是写书用的排版小工具（只在教程 `common/_setup.qmd` 里），不属于包；`fig()` 换成 `render_frame()` / `last_frame()` 即可 |
+| 抄教程代码报「没有 `st` 这个函数」 | 你装的是 0.0.1。升级即可；临时替代写法是 `style = list(stroke = "#58C4DD", stroke_width = 5)` |
+| 抄教程代码报「没有 `fig` / `lab` / `tex` 这个函数」 | 你装的是 0.0.2 或更早。这 6 个排字出图函数自 0.0.3 起才导出；`fig()` 的临时替代是 `render_frame()` / `last_frame()` |
+| `fig()` 在控制台里只打印一行「已写出 …」 | 正常：`fig()` 在 knit 里交 knitr 图对象，在控制台里返回文件路径并 message 一行；要看图用 `browseURL()` 或 `png::readPNG()` |
 
 架构与取舍的完整记录见 `docs/ARCHITECTURE.md`。
 v1 口径（已拍板）：R6 方法式 API；最小闭环 = `text` + `mathtex` + `Transform` +
@@ -102,7 +104,7 @@ v1 口径（已拍板）：R6 方法式 API；最小闭环 = `text` + `mathtex` 
 ## 配套教程
 
 配套的 Quarto 教程是**独立项目** `ROpenManimTutorial`：19 章 + 3 个附录，从第一个圆讲到
-三维曲面，含 Manim 经典示例的 R 复现、十七个坑的排错表、三个综合项目、97 个导出的
+三维曲面，含 Manim 经典示例的 R 复现、十七个坑的排错表、三个综合项目、103 个导出的
 API 速查，以及全书回归索引。本包**不依赖**该教程；教程的公共 setup 直接 `source()`
 本仓库 `R/` 下的 16 个源文件——改一行源码重渲染即可看到效果。
 
@@ -291,7 +293,7 @@ sc$play(rotate3d_group(box, axis = "z", angle = pi / 4))
 
 ```bash
 cd ROpenManim
-Rscript regression/run-all.R          # 合计 198 PASS / 0 FAIL
+Rscript regression/run-all.R          # 合计 209 PASS / 0 FAIL
 ```
 
 | 脚本 | 条数 | 覆盖 |
@@ -300,7 +302,7 @@ Rscript regression/run-all.R          # 合计 198 PASS / 0 FAIL
 | `regression/rm_p1_assert.R` | 40 | P1 图元 + 线性变换 |
 | `regression/rm_homogeneous_assert.R` | 42 | 齐次 3x3 |
 | `regression/rm_3d_assert.R` | 74 | 齐次 4x4 / 相机 / 三维 |
-| `regression/rm_helpers_assert.R` | 26 | `COL` / `st()` / `fl()` 与 `.rm_*` 逐项等价、结构查询、第一章示例可独立运行 |
+| `regression/rm_helpers_assert.R` | 37 | `COL` / `st()` / `fl()` 与 `.rm_*` 逐项等价、结构查询、`cjk_font()`/`lab()`/`fig()` 等排字出图、第一章示例可独立运行 |
 
 覆盖：`COL` / `st()` / `fl()` 与 `.rm_stroke()` / `.rm_fill()` 逐项等价、
 `peek()` / `n_subpaths()` / `can_morph()` 的输出、用户第一章示例 2.4 秒且走真 morph；
@@ -420,7 +422,7 @@ curves 与 polys 逐点一致、消失线断开与有限性、`succession(M, M^{
 ```
 ROpenManim/
   DESCRIPTION  NAMESPACE  README.md  .Rbuildignore
-  man/                    10 个分组 Rd，覆盖 NAMESPACE 的 97 个导出
+  man/                    10 个分组 Rd，覆盖 NAMESPACE 的 103 个导出
   R/geometry.R            贝塞尔、展平、弧长、截断、重采样、仿射、齐次/射影求值
   R/mobject.R             R6 图元 + 样式 + 绘制指令编译
   R/svgpath.R             最小 SVG path 解析器（M/L/H/V/C/S/Q/T/A/Z）
@@ -436,7 +438,7 @@ ROpenManim/
   R/scene.R               场景 R6：时间轴段 + 纯函数 compile(t) + 相机与深度排序
   R/backend-grid.R        grid 后端（path / stroke）
   R/render.R              逐帧渲染 + av 编码
-  R/helpers.R             COL 调色板、st()/fl() 样式简写、结构窥视 6 函数（v0.0.2 新增）
+  R/helpers.R             COL、st()/fl()、结构窥视 6 函数、排字出图 6 函数（v0.0.3 共 15 个导出）
   regression/             五套断言 + run-all.R；仅源码仓库可见
   docs/ARCHITECTURE.md    架构决策记录（ADR-002 随包发布版）
   tools/dump_sig.R        NAMESPACE → 签名清单（构建期用）

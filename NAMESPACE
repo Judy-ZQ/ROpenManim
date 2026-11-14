@@ -38,6 +38,13 @@ export(n_curves)
 export(n_objects)
 export(can_morph)
 export(peek)
+## 公开辅助层：排字与出图包装（书里的示例复制到安装版即可运行）
+export(cjk_font)
+export(lab)
+export(tex)
+export(ref_axes)
+export(fig)
+export(frame_to)
 ## P1 图元（23 个）
 export(arc_obj)
 export(sector_obj)
