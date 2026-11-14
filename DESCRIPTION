@@ -1,0 +1,29 @@
+Package: ROpenManim
+Type: Package
+Title: Mathematical Animation Engine for R
+Version: 0.0.1
+Authors@R: person("Qing", "Zhu", email = "20170458@alu.cqu.edu.cn",
+    role = c("aut", "cre"))
+Description: A scene-graph and animation engine in the spirit of Manim, but
+    implemented natively in R.  A frame is compiled into a list of drawing
+    instructions (path / stroke / image) and handed to a pluggable backend;
+    the default backend draws with 'grid' onto any R graphics device, so a
+    video is just a sequence of device frames encoded by 'av'.  Text is
+    converted to real outlines through 'systemfonts', and LaTeX formulas are
+    compiled with 'dvisvgm' into Bezier paths, which means formulas and text
+    are ordinary vector objects that can be transformed, faded and morphed
+    rather than pasted as bitmaps.  Camera geometry follows Manim: a frame is
+    8 units tall with a 16:9 aspect ratio.
+License: GPL-2
+Encoding: UTF-8
+URL: https://github.com/Judy-ZQ/ROpenManim
+BugReports: https://github.com/Judy-ZQ/ROpenManim/issues
+Depends: R (>= 4.2.0)
+Imports: R6, grDevices, grid, systemfonts, av, utils, stats, tools
+Suggests: tinytex
+SystemRequirements: Only needed for optional features: a LaTeX installation
+    providing dvisvgm is required by mathtex(). Video encoding is handled by
+    the 'av' package, whose Windows binary bundles FFmpeg, so no separate
+    ffmpeg install and no Rtools are needed.
+NeedsCompilation: no
+RoxygenNote: 7.3.2

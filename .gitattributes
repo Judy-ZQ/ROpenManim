@@ -1,0 +1,11 @@
+# R CMD build 会检查源码必须是 LF 行尾；Windows 上 core.autocrlf 会破坏它。
+* text=auto eol=lf
+
+# 预构建安装包与媒体是二进制，禁止换行转换。
+*.zip    binary
+*.tar.gz binary
+*.png    binary
+*.jpg    binary
+*.mp4    binary
+*.rdb    binary
+*.rds    binary

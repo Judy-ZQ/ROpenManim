@@ -1,0 +1,13 @@
+^_sig\.tsv$
+^regression$
+^tools$
+^docs$
+^dist$
+^\.git$
+^\.gitignore$
+^\.Rbuildignore$
+^ROpenManim_.*\.tar\.gz$
+^ROpenManim_.*\.zip$
+^ROpenManim\.Rcheck$
+^.*\.Rproj$
+^\.Rproj\.user$

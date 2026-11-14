@@ -1,0 +1,8 @@
+_sig.tsv
+/ROpenManim_*.tar.gz
+/ROpenManim_*.zip
+*.Rcheck/
+.Rproj.user/
+*.Rproj
+.DS_Store
+Thumbs.db
