@@ -23,7 +23,8 @@ suppressPackageStartupMessages(library(grid))
 
 files <- c("geometry.R", "mobject.R", "svgpath.R", "text.R", "tex.R", "axes.R",
            "primitives.R", "animation.R", "anim-linalg.R", "homogeneous3d.R",
-           "primitives3d.R", "camera.R", "scene.R", "backend-grid.R", "render.R")
+           "primitives3d.R", "camera.R", "scene.R", "backend-grid.R", "render.R",
+           "helpers.R")
 for (f in files) source(file.path(root, "R", f), encoding = "UTF-8")
 
 ns <- readLines(file.path(root, "NAMESPACE"), encoding = "UTF-8")

@@ -1,7 +1,7 @@
 Package: ROpenManim
 Type: Package
 Title: Mathematical Animation Engine for R
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Qing", "Zhu", email = "20170458@alu.cqu.edu.cn",
     role = c("aut", "cre"))
 Description: A scene-graph and animation engine in the spirit of Manim, but

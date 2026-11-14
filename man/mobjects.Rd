@@ -101,7 +101,7 @@ basis_arrows_obj(e1 = c(1, 0), e2 = c(0, 1), color1 = "#FC6255", color2 = "#83C1
   \item{gap}{虚线间隔长度。}
   \item{h}{该参数的含义见本页 \code{Usage} 与 \code{Details}；同名参数在各函数间语义一致。}
   \item{head}{箭头头部长度。}
-  \item{label}{向量旁的标签文字。}
+  \item{label}{标签文字：向量图元指向量旁的标注，peek() 指打印时显示的名称。}
   \item{label_offset}{标签相对向量终点的偏移。}
   \item{label_size}{标签字号。}
   \item{labels}{该参数的含义见本页 \code{Usage} 与 \code{Details}；同名参数在各函数间语义一致。}

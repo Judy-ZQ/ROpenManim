@@ -86,6 +86,20 @@ groups = [
      "传裸向量 \\code{c(1,2,3)} 会被当成 3 个点且不报错；单点必须写"
      "\\code{matrix(p, nrow = 1)}，批量用 \\code{pts[i, , drop = FALSE]}。",
      "cam <- camera3d(eye = c(6, -8, 5))\nP <- matrix(c(1, 2, 3), nrow = 1)\nproject_point(cam, P)\ns <- scene(camera = cam)\ns$add(cube3d_obj(side = 2))\nlength(s$compile(0))"),
+
+    ("helpers", "样式简写与结构窥视",
+     ["COL", "st", "fl", "subpaths", "n_subpaths", "n_curves",
+      "n_objects", "can_morph", "peek"],
+     "\\code{COL} 是 Manim 风格调色板；\\code{st()} / \\code{fl()} 是 \\code{style} 列表的"
+     "简写（描边 / 填充），可直接传给任何 \\code{*_obj()}。",
+     "后六个函数把「帧 = 绘制指令列表」的结构变成可查询的公开数据："
+     "\\code{subpaths()} 返回展平后的折线，\\code{n_subpaths()} 与 \\code{n_curves()} "
+     "分别数子路径与贝塞尔段，\\code{n_objects()} 数摊平后的图元个数，"
+     "\\code{can_morph(a, b)} 判断 \\code{transform()} 会不会退化为交叉淡入淡出，"
+     "\\code{peek()} 一行打印形状、子路径数与包围盒。"
+     "注意 \\strong{对象数} 与 \\strong{子路径数} 是两个不同的数："
+     "\\code{arrow_obj()} 是 2 个对象、\\code{text(\"O\")} 可能有多个子路径。",
+     "o <- circle_obj(r = 1, style = st(COL$cyan, 5))\npeek(o)\nn_subpaths(o)\nn_curves(o)\ncan_morph(o, square_obj(side = 2))"),
 ]
 
 # 自动补齐五个组的成员；二维图元必须排除 3d_obj
@@ -160,7 +174,9 @@ argdoc = {
     "lim": "三维坐标轴的范围。", "z": "三维网格所在高度。",
     "extent": "等值线的绘制范围。", "baseline": "面积填充的基线高度。",
     "dash": "虚线段长度。", "gap": "虚线间隔长度。", "dashed": "是否画成虚线。",
-    "label": "向量旁的标签文字。", "label_size": "标签字号。",
+    "label": "标签文字：向量图元指向量旁的标注，peek() 指打印时显示的名称。",
+    "label_size": "标签字号。",
+    "o": "要检查 / 统计的图元或图元组。",
     "label_offset": "标签相对向量终点的偏移。", "origin": "起点 / 原点。",
     "dir": "刻度或标记的方向。", "near": "透视近裁剪距离。",
     "type": "\\code{\"ortho\"}（正交）或 \\code{\"persp\"}（透视）。",
@@ -208,6 +224,11 @@ for fname, title, members, desc, details, examples in groups:
     elif fname == "scene":
         lns.append("\\code{scene()} 返回 R6 场景；\\code{compile(t)} 返回绘制指令列表；"
                    "\\code{render()} / \\code{render_frame()} / \\code{last_frame()} 写出文件。")
+    elif fname == "helpers":
+        lns.append("\\code{COL} 是颜色列表；\\code{st()} / \\code{fl()} 返回样式列表；"
+                   "\\code{subpaths()} 返回折线矩阵列表，\\code{n_subpaths()} / "
+                   "\\code{n_curves()} / \\code{n_objects()} 返回非负整数，"
+                   "\\code{can_morph()} 返回逻辑标量，\\code{peek()} 打印摘要并原样返回对象。")
     else:
         lns.append("本页各 \\code{*_obj()} 返回 \\code{rm_mobject}（R6 图元）；"
                    "矩阵构造器返回数值矩阵；动画构造器返回可交给 \\code{scene$play()} 的对象。")
@@ -243,8 +264,9 @@ Manim 的 R 侧实现。核心约定是\strong{帧 = 绘制指令列表}：\code
 另需本机 TeX 与 \code{dvisvgm}（可选 \code{tinytex}）。
 \strong{不需要编译}，Windows 用户无需 Rtools。
 }
-\value{载入后可用 88 个导出，按主题分见 \code{?scene}、\code{?mobjects}、
-\code{?animation}、\code{?linalg2d}、\code{?linalg3d}、\code{?`three-d`}。}
+\value{载入后可用 97 个导出，按主题分见 \code{?scene}、\code{?mobjects}、
+\code{?animation}、\code{?linalg2d}、\code{?linalg3d}、\code{?`three-d`}、
+\code{?helpers}、\code{?constants}、\code{?text-tex-axes}。}
 \examples{
 s <- scene()
 s$add(circle_obj(r = 1))

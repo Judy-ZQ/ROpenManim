@@ -1,11 +1,12 @@
-## 一键跑四套回归断言（源码直跑，不要求先安装包）。
+## 一键跑五套回归断言（源码直跑，不要求先安装包）。
 ## cd ROpenManim && env -u LC_ALL -u LANG Rscript regression/run-all.R
 Sys.setenv(LC_CTYPE = "Chinese (Simplified)_China.utf8")
 a <- commandArgs(trailingOnly = FALSE)
 hit <- sub("^--file=", "", grep("^--file=", a, value = TRUE))
 here <- if (length(hit)) normalizePath(dirname(hit[1]), winslash = "/") else "regression"
 
-files <- c("rm_assert.R", "rm_p1_assert.R", "rm_homogeneous_assert.R", "rm_3d_assert.R")
+files <- c("rm_assert.R", "rm_p1_assert.R", "rm_homogeneous_assert.R",
+           "rm_3d_assert.R", "rm_helpers_assert.R")
 tot_pass <- 0L; tot_fail <- 0L
 for (f in files) {
   cat("\n===== ", f, " =====\n", sep = "")
