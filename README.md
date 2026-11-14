@@ -13,9 +13,11 @@ Manim 的 R 侧实现：**帧 = 绘制指令列表**，v1 后端只实现 path /
 
 ### 方式 A：下载 zip 直接装（推荐）
 
-1. 在本仓库的 [Releases](https://github.com/Judy-ZQ/ROpenManim/releases) 页下载
-   `ROpenManim_0.0.1.zip`（Windows binary）；若尚未发布 Release，可取仓库
-   `dist/` 下的同名文件。
+1. 打开 [v0.0.1 Release](https://github.com/Judy-ZQ/ROpenManim/releases/tag/v0.0.1)，
+   下载 `ROpenManim_0.0.1.zip`（Windows binary，约 350 KB）。若 Release 链接
+   在当前网络下打不开，仓库里还有同一文件的
+   [直链](https://raw.githubusercontent.com/Judy-ZQ/ROpenManim/main/dist/ROpenManim_0.0.1.zip)
+   与 [`dist/`](dist/) 备份。
 2. 在 R 里执行（换成你实际的下载路径）：
 
 ```r
@@ -36,6 +38,8 @@ remotes::install_github("Judy-ZQ/ROpenManim")
 因为包里没有任何 C/C++ 代码，这条命令在 Windows 上**同样不需要 Rtools**。
 
 ### 方式 C：源码 tarball
+
+同一 Release 页也提供 `ROpenManim_0.0.1.tar.gz`（约 53 KB）：
 
 ```r
 install.packages("ROpenManim_0.0.1.tar.gz", repos = NULL, type = "source")
